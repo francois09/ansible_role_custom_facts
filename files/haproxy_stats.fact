@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+import csv
+import json
+import socket
+import sys
+
+HA_SOCKET = '/var/run/haproxy/admin.sock'
+RECV_SIZE = 1024
+
+
+def ask_haproxy(cmd, socket_path=None):
+    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    _socket = HA_SOCKET
+    if socket_path:
+        _socket = socket_path
+    client.connect(_socket)
+    client.sendall('%s\n' % cmd)
+    data, buf = ('', '')
+    buf = client.recv(RECV_SIZE)
+    while buf:
+        data += buf
+        buf = client.recv(RECV_SIZE)
+    client.close()
+
+    return csv.DictReader(
+        data.lstrip('# ').strip().splitlines()
+    )
+
+
+def haproxy_get_stats(socket_path=None):
+    d = ask_haproxy('show stat', socket_path)
+    stats = {}
+    for service in d:
+        if service['pxname'] not in ('BACKEND', 'FRONTEND'):
+            group = service['pxname']
+            back = service['svname']
+            if group not in stats:
+                stats[group] = {}
+            stats[group][back] = service
+    return stats
+
+
+sys.stdout.write(json.dumps(haproxy_get_stats()))

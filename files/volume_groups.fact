@@ -1,0 +1,4 @@
+#!/bin/bash -e
+# Output all volume groups
+
+vgs --noheadings --reportformat json|jq -M ".report|.[0]|.vg"

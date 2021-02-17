@@ -1,0 +1,11 @@
+#!/bin/bash -e
+# Output all groups the machine belongs to
+
+cat <<EOF
+[
+{% if group_names is defined %}
+  {% for groupname in group_names %}"{{ groupname }}"{{ ", " if not loop.last else "" }}{% endfor %}
+{% endif %}
+
+]
+EOF

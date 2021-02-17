@@ -1,0 +1,4 @@
+#!/bin/bash -e
+# Output all logical volumes
+
+lvs --noheadings --reportformat json|jq -M ".report|.[0]|.lv"

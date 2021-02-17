@@ -1,0 +1,14 @@
+---
+# defaults templates for custom_facts
+custom_facts__templates:
+  - groups
+
+# defaults scripts for custom_facts
+custom_facts__scripts:
+  - active_users
+  - sudo_users
+
+# Additional facts
+custom_facts__additional_templates: []
+custom_facts__additional_scripts: []
+...

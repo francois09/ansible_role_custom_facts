@@ -1,0 +1,42 @@
+---
+# Create the custom facts directory
+- name: Create /etc/ansible/facts.d folder
+  file:
+    path: /etc/ansible/facts.d
+    state: directory
+
+# Then copy enabled default custom facts templates
+- name: Place all the enabled custom_facts - templates
+  template:
+    src: "{{ item }}.fact"
+    dest: "/etc/ansible/facts.d/{{ item }}.fact"
+    mode: 0755
+  with_items: "{{ custom_facts__templates }}"
+
+# And then some default computed custom facts
+- name: Place the enabled custom_facts - files
+  copy:
+    src: "{{ item }}.fact"
+    dest: '/etc/ansible/facts.d/{{ item }}.fact'
+    mode: 0755
+  with_items: "{{ custom_facts__scripts }}"
+  when: "custom_facts__scripts is defined"
+
+# Additional custom facts templates
+- name: Place additional custom_facts - templates
+  template:
+    src: "{{ item }}.fact"
+    dest: "/etc/ansible/facts.d/{{ item }}.fact"
+    mode: 0755
+  with_items: "{{ custom_facts__additional_templates }}"
+  when: "custom_facts__additional_templates is defined"
+
+# Additional computed custom facts
+- name: Place additional custom_facts - files
+  copy:
+    src: "{{ item }}.fact"
+    dest: '/etc/ansible/facts.d/{{ item }}.fact'
+    mode: 0755
+  with_items: "{{ custom_facts__additional_scripts }}"
+  when: "custom_facts__additional_scripts is defined"
+...
