@@ -2,11 +2,11 @@
 # defaults templates for custom_facts
 custom_facts__templates:
   - groups
-
-# defaults scripts for custom_facts
-custom_facts__scripts:
   - active_users
   - sudo_users
+
+# defaults scripts for custom_facts
+custom_facts__scripts: []
 
 # Additional facts
 custom_facts__additional_templates: []
