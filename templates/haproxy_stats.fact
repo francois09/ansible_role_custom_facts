@@ -15,14 +15,13 @@ def ask_haproxy(cmd, socket_path=None):
     if socket_path:
         _socket = socket_path
     client.connect(_socket)
-    client.sendall('%s\n' % cmd)
+    client.sendall(bytearray('%s\n' % cmd, 'utf-8'))
     data, buf = ('', '')
     buf = client.recv(RECV_SIZE)
     while buf:
-        data += buf
+        data += buf.decode()
         buf = client.recv(RECV_SIZE)
     client.close()
-
     return csv.DictReader(
         data.lstrip('# ').strip().splitlines()
     )
@@ -32,7 +31,7 @@ def haproxy_get_stats(socket_path=None):
     d = ask_haproxy('show stat', socket_path)
     stats = {}
     for service in d:
-        if service['pxname'] not in ('BACKEND', 'FRONTEND'):
+        if service['svname'] not in ('BACKEND', 'FRONTEND'):
             group = service['pxname']
             back = service['svname']
             if group not in stats:
